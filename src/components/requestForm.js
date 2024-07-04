@@ -10,7 +10,7 @@ export default function RequestForm() {
     email: "",
   });
   const [sendReq, setSendReq] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
+  const [alertMsg, setAlertMsg] = useState("test");
   const [alertType, setAlertType] = useState("success");
   const [showAlert, setShowAlert] = useState(false);
 
@@ -27,7 +27,7 @@ export default function RequestForm() {
   };
 
   const check = () => {
-    setTimeout(() => setShowAlert(true), 10000);
+    setTimeout(() => setShowAlert(true), 5000);
   };
 
   return (
@@ -47,43 +47,49 @@ export default function RequestForm() {
           minHeight: "100vh",
         }}
       >
-        <Box
-          sx={{
-            width: "50%",
-            height: "50%",
-            minWidth: "250px",
-            maxWidth: "750px",
-            bgcolor: "#FFFFFF",
-            p: 2,
-            borderRadius: 5,
-          }}
-        >
-          <Stack spacing={2} align="center">
-            <Typography variant="h6" gutterBottom>
-              Запрос единого идентификатора ВУЗа
-            </Typography>
-            <TextField
-              id="outlined-basic"
-              label="Номер, серия паспорта"
-              variant="outlined"
-              onChange={getNumber}
+        <Box sx={{ minWidth: "250px", width: "50%", height: "50%" }}>
+          <Box
+            sx={{
+              minWidth: "250px",
+              maxWidth: "750px",
+              bgcolor: "#FFFFFF",
+              p: 2,
+              mb: 2,
+              borderRadius: 5,
+            }}
+          >
+            <Stack spacing={2} align="center">
+              <Typography variant="h6" gutterBottom>
+                Запрос единого идентификатора ВУЗа
+              </Typography>
+              <TextField
+                id="outlined-basic"
+                label="Номер, серия паспорта"
+                variant="outlined"
+                onChange={getNumber}
+              />
+              <TextField
+                id="outlined-basic"
+                label="Адрес электронной почты"
+                variant="outlined"
+                onChange={getEmail}
+              />
+              <LoadingButton
+                variant="contained"
+                color="info"
+                loading={sendReq}
+                onClick={check}
+              >
+                Отправить запрос
+              </LoadingButton>
+            </Stack>
+          </Box>
+          {showAlert ? (
+            <BriefMsg
+              alertSettings={{ msg: alertMsg, type: alertType }}
+              action={setShowAlert}
             />
-            <TextField
-              id="outlined-basic"
-              label="Адрес электронной почты"
-              variant="outlined"
-              onChange={getEmail}
-            />
-            <LoadingButton
-              variant="contained"
-              color="info"
-              loading={sendReq}
-              onClick={check}
-            >
-              Отправить запрос
-            </LoadingButton>
-            {showAlert ? <BriefMsg /> : null}
-          </Stack>
+          ) : null}
         </Box>
       </Box>
     </div>

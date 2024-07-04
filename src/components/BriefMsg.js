@@ -1,9 +1,24 @@
-import { Alert } from "@mui/material";
+import { Alert, Button, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
-export default function BriefMsg() {
+export default function BriefMsg(props) {
   return (
-    <Alert severity="success" variant="filled">
-      Проверочная ссылка отправлена. Проверьте почту.
+    <Alert
+      action={
+        <IconButton
+          aria-label="close"
+          color="inherit"
+          size="small"
+          onClick={() => {
+            props.action(false);
+          }}
+        >
+          <CloseIcon fontSize="inherit" />
+        </IconButton>
+      }
+      severity={props.alertSettings.type}
+    >
+      {props.alertSettings.msg}
     </Alert>
   );
 }
