@@ -3,14 +3,15 @@ import { Box, Stack, Typography, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Item from "./Item.js";
 import BriefMsg from "./BriefMsg.js";
+import RequestEIV from "../functions/RequestEIV.js";
 
-export default function RequestForm() {
+export default function RequestForm(props) {
   const [info, setInfo] = useState({
     number: "",
     email: "",
   });
   const [sendReq, setSendReq] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("test");
+  const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [showAlert, setShowAlert] = useState(false);
 
@@ -26,9 +27,9 @@ export default function RequestForm() {
     });
   };
 
-  const check = () => {
-    setTimeout(() => setShowAlert(true), 5000);
-  };
+  // const check = () => {
+  //   setTimeout(() => setShowAlert(true), 5000);
+  // };
 
   return (
     <div>
@@ -78,7 +79,7 @@ export default function RequestForm() {
                 variant="contained"
                 color="info"
                 loading={sendReq}
-                onClick={check}
+                onClick={() => RequestEIV(props.url, setSendReq, info)}
               >
                 Отправить запрос
               </LoadingButton>
