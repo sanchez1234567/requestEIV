@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Box, Stack, Typography, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import Item from "./Item.js";
 import BriefMsg from "./BriefMsg.js";
-import RequestEIV from "../functions/RequestEIV.js";
 
 export default function RequestForm(props) {
   const [info, setInfo] = useState({
-    number: "",
+    noSer: "",
     email: "",
   });
   const [sendReq, setSendReq] = useState(false);
@@ -17,19 +15,56 @@ export default function RequestForm(props) {
 
   const getNumber = (e) => {
     setInfo((obj) => {
-      return { ...obj, number: e.target.value };
+      return { ...obj, noSer: String(e.target.value) };
     });
   };
 
   const getEmail = (e) => {
     setInfo((obj) => {
-      return { ...obj, email: e.target.value };
+      return { ...obj, email: String(e.target.value) };
     });
   };
 
-  // const check = () => {
-  //   setTimeout(() => setShowAlert(true), 5000);
-  // };
+  const reqVerLink = async () => {
+    setSendReq(true);
+    try {
+      const responseVerLink = await fetch(props.url, {
+        mode: "no-cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(info),
+      });
+      if (responseVerLink.ok) {
+        const responseInfo = await responseVerLink.json();
+        setAlertMsg(responseInfo.resMsg);
+        setAlertType(responseInfo.type);
+        setSendReq(false);
+        setShowAlert(true);
+      }
+      if (!responseVerLink.ok && responseVerLink.status === 404) {
+        throw new Error("404");
+      }
+    } catch (err) {
+      handleErr(err);
+    }
+  };
+
+  const handleErr = (error) => {
+    if (String(error).includes("Failed to fetch")) {
+      setAlertMsg("Сервер не отвечает");
+      setAlertType("error");
+      setSendReq(false);
+      setShowAlert(true);
+    }
+    if (String(error).includes("404")) {
+      setAlertMsg("Сервер не отвечает");
+      setAlertType("error");
+      setSendReq(false);
+      setShowAlert(true);
+    }
+  };
 
   return (
     <div>
@@ -79,7 +114,7 @@ export default function RequestForm(props) {
                 variant="contained"
                 color="info"
                 loading={sendReq}
-                onClick={() => RequestEIV(props.url, setSendReq, info)}
+                onClick={reqVerLink}
               >
                 Отправить запрос
               </LoadingButton>

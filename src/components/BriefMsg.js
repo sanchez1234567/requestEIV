@@ -1,4 +1,4 @@
-import { Alert, Button, IconButton } from "@mui/material";
+import { Alert, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function BriefMsg(props) {
