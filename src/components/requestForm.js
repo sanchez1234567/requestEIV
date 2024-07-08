@@ -29,6 +29,7 @@ export default function RequestForm(props) {
     setSendReq(true);
     try {
       const responseVerLink = await fetch(props.url, {
+        signal: AbortSignal.timeout(60000),
         mode: "no-cors",
         method: "POST",
         headers: {
@@ -57,20 +58,35 @@ export default function RequestForm(props) {
       setAlertType("error");
       setSendReq(false);
       setShowAlert(true);
+      return;
     }
     if (String(error).includes("404")) {
       setAlertMsg("Сервер не отвечает");
       setAlertType("error");
       setSendReq(false);
       setShowAlert(true);
+      return;
+    }
+    if (error.name === "TimeoutError") {
+      setAlertMsg("Время ожидания ответа сервера вышло");
+      setAlertType("error");
+      setSendReq(false);
+      setShowAlert(true);
+      return;
+    } else {
+      setAlertMsg("Ошибка запроса");
+      setAlertType("error");
+      setSendReq(false);
+      setShowAlert(true);
+      return;
     }
   };
 
   return (
     <div>
       <Box
+        margin="auto"
         sx={{
-          flexGrow: 1,
           border: 0,
           bgcolor: "#f0f4f9",
           pt: 20,
@@ -78,16 +94,24 @@ export default function RequestForm(props) {
           pr: 1,
           pl: 1,
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-evenly",
           minWidth: "250px",
           minHeight: "100vh",
         }}
       >
-        <Box sx={{ minWidth: "250px", width: "50%", height: "50%" }}>
+        <Box
+          sx={{
+            minWidth: "250px",
+            maxWidth: "700px",
+            width: "50%",
+            height: "50%",
+            justifyContent: "center",
+          }}
+        >
           <Box
             sx={{
               minWidth: "250px",
-              maxWidth: "750px",
+              maxWidth: "700px",
               bgcolor: "#FFFFFF",
               p: 2,
               mb: 2,
@@ -99,14 +123,16 @@ export default function RequestForm(props) {
                 Запрос единого идентификатора ВУЗа
               </Typography>
               <TextField
-                id="outlined-basic"
+                required
                 label="Номер, серия паспорта"
+                id="outlined"
                 variant="outlined"
                 onChange={getNumber}
               />
               <TextField
-                id="outlined-basic"
+                required
                 label="Адрес электронной почты"
+                id="outlined-basic"
                 variant="outlined"
                 onChange={getEmail}
               />
@@ -115,6 +141,11 @@ export default function RequestForm(props) {
                 color="info"
                 loading={sendReq}
                 onClick={reqVerLink}
+                disabled={
+                  info["noSer"].length > 0 && info["email"].length > 0
+                    ? false
+                    : true
+                }
               >
                 Отправить запрос
               </LoadingButton>
