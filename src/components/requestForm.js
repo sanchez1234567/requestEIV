@@ -12,6 +12,7 @@ export default function RequestForm(props) {
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [showAlert, setShowAlert] = useState(false);
+  const [butMsg, setButMsg] = useState("Отправить запрос");
 
   const getNumber = (e) => {
     setInfo((obj) => {
@@ -27,6 +28,7 @@ export default function RequestForm(props) {
 
   const reqVerLink = async () => {
     setSendReq(true);
+    setButMsg("Запрос выполняется...");
     try {
       const responseVerLink = await fetch(props.url, {
         signal: AbortSignal.timeout(60000),
@@ -43,11 +45,13 @@ export default function RequestForm(props) {
         setAlertType(responseInfo.type);
         setSendReq(false);
         setShowAlert(true);
+        setButMsg("Повторить запрос");
       }
       if (!responseVerLink.ok && responseVerLink.status === 404) {
         throw new Error("404");
       }
     } catch (err) {
+      setButMsg("Повторить запрос");
       handleErr(err);
     }
   };
@@ -141,13 +145,14 @@ export default function RequestForm(props) {
                 color="info"
                 loading={sendReq}
                 onClick={reqVerLink}
+                loadingPosition="end"
                 disabled={
                   info["noSer"].length > 0 && info["email"].length > 0
                     ? false
                     : true
                 }
               >
-                Отправить запрос
+                {butMsg}
               </LoadingButton>
             </Stack>
           </Box>
