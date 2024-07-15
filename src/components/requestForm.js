@@ -5,7 +5,7 @@ import BriefMsg from "./BriefMsg.js";
 
 export default function RequestForm(props) {
   const [info, setInfo] = useState({
-    noSer: "",
+    serNo: "",
     email: "",
   });
   const [sendReq, setSendReq] = useState(false);
@@ -16,7 +16,7 @@ export default function RequestForm(props) {
 
   const getNumber = (e) => {
     setInfo((obj) => {
-      return { ...obj, noSer: String(e.target.value) };
+      return { ...obj, serNo: String(e.target.value) };
     });
   };
 
@@ -27,6 +27,12 @@ export default function RequestForm(props) {
   };
 
   const reqVerLink = async () => {
+    if (!/^[a-zA-Z0-9]+$/.test(info["serNo"])) {
+      setAlertMsg("Серия номер не должны содержать символов");
+      setAlertType("warning");
+      setShowAlert(true);
+      return;
+    }
     setSendReq(true);
     setButMsg("Запрос выполняется...");
     try {
@@ -127,14 +133,12 @@ export default function RequestForm(props) {
                 Запрос единого идентификатора ВУЗа
               </Typography>
               <TextField
-                required
-                label="Номер, серия паспорта"
+                label="Серия номер паспорта"
                 id="outlined"
                 variant="outlined"
                 onChange={getNumber}
               />
               <TextField
-                required
                 label="Адрес электронной почты"
                 id="outlined-basic"
                 variant="outlined"
@@ -147,7 +151,7 @@ export default function RequestForm(props) {
                 onClick={reqVerLink}
                 loadingPosition="end"
                 disabled={
-                  info["noSer"].length > 0 && info["email"].length > 0
+                  info["serNo"].length > 0 && info["email"].length > 0
                     ? false
                     : true
                 }
